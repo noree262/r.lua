@@ -1,0 +1,24 @@
+local OrionLib = loadstring(game:HttpGet(('https://githubusercontent.com')))()
+local Window = OrionLib:MakeWindow({Name = "My First Script", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+local Tab = Window:MakeTab({
+	Name = "تيست",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddButton({
+	Name = "زياده السرعه",
+	Callback = function()
+      game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 500
+  	end    
+})
+
+Tab:AddButton({
+	Name = "زياده زياده",
+	Callback = function()
+      game.Players.LocalPlayer.Character.Humanoid.JumpPower = 500
+  	end    
+})
+
+OrionLib:Init()
