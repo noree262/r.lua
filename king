@@ -1,0 +1,159 @@
+local Rayfield = loadstring(game:HttpGet('https://githubusercontent.com'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "👑 the king noree262 👑",
+   LoadingTitle = "جاري تفعيل سكربت الملك...",
+   LoadingSubtitle = "بواسطة the king noree262",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "D7Hub_noree262",
+      FileName = "StealEgg"
+   },
+   KeySystem = false
+})
+
+local Tab1 = Window:CreateTab("🌾 التجميع والتتبع", 4483363487)
+local Tab2 = Window:CreateTab("⚡ الانتقال السريع", 4483363487)
+local Tab3 = Window:CreateTab("⚙️ قدرات اللاعب", 4483363487)
+local Tab4 = Window:CreateTab("👤 الملك المطور", 4483363487)
+
+-- ميزة التجميع التلقائي للبيض
+local AutoFarm = false
+Tab1:CreateToggle({
+   Name = "تفعيل تجمع البيض (Auto Farm)",
+   CurrentValue = false,
+   Flag = "FarmToggle",
+   Callback = function(Value)
+       AutoFarm = Value
+       task.spawn(function()
+           while AutoFarm and task.wait(0.5) do
+               for _, egg in pairs(workspace:GetChildren()) do
+                   if egg.Name == "Egg" or egg:FindFirstChild("Egg") then
+                       local RootPart = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                       if RootPart and egg:IsA("BasePart") then
+                           RootPart.CFrame = egg.CFrame
+                       end
+                   end
+               end
+           end
+       end)
+   end,
+})
+
+-- ميزة الأكس ري (X-Ray ESP) لكشف محتوى البيضة
+local XRayEnabled = false
+Tab1:CreateToggle({
+   Name = "تفعيل الأكس ري لكشف محتوى البيض (X-Ray)",
+   CurrentValue = false,
+   Flag = "XRayToggle",
+   Callback = function(Value)
+       XRayEnabled = Value
+       
+       -- دالة لإنشاء النص العائم فوق البيضة
+       local function createESP(egg)
+           if not egg:IsA("BasePart") or egg:FindFirstChild("EggESP") then return end
+           
+           -- قراءة البيانات المكتوبة داخل البيضة (مثل الفلوس أو الحيان)
+           local contentText = "بيض"
+           if egg:FindFirstChild("Reward") or egg:FindFirstChild("Value") then
+               local reward = egg:FindFirstChild("Reward") or egg:FindFirstChild("Value")
+               contentText = tostring(reward.Value)
+           elseif egg:FindFirstChild("Health") or egg:FindFirstChild("Stats") then
+               local health = egg:FindFirstChild("Health") or egg:FindFirstChild("Stats")
+               contentText = "الحيان: " .. tostring(health.Value)
+           end
+           
+           -- إنشاء لوحة النص ثلاثية الأبعاد
+           local bgui = Instance.new("BillboardGui")
+           bgui.Name = "EggESP"
+           bgui.AlwaysOnTop = true
+           bgui.Size = UDim2.new(0, 200, 0, 50)
+           bgui.StudsOffset = Vector3.new(0, 3, 0)
+           bgui.Parent = egg
+           
+           local tl = Instance.new("TextLabel")
+           tl.Size = UDim2.new(1, 0, 1, 0)
+           tl.BackgroundTransparency = 1
+           tl.Text = "🥚 [" .. contentText .. "]"
+           tl.TextColor3 = Color3.fromRGB(255, 215, 0) -- لون ذهبي ملكي للأكس ري
+           tl.TextSize = 18
+           tl.Font = Enum.Font.SourceSansBold
+           tl.Parent = bgui
+       end
+
+       -- تنظيف الأكس ري عند الإغلاق
+       local function removeESP()
+           for _, egg in pairs(workspace:GetDescendants()) do
+               if egg.Name == "EggESP" then
+                   egg:Destroy()
+               end
+           end
+       end
+
+       if XRayEnabled then
+           -- تشغيل الأكس ري للبيض الحالي والجديد
+           for _, egg in pairs(workspace:GetChildren()) do
+               if egg.Name == "Egg" or egg.Name:lower():find("egg") then
+                   createESP(egg)
+               end
+           end
+           workspace.ChildAdded:Connect(function(child)
+               if XRayEnabled and (child.Name == "Egg" or child.Name:lower():find("egg")) then
+                   task.wait(0.1)
+                   createESP(child)
+               end
+           end)
+       else
+           removeESP()
+       end
+   end,
+})
+
+Tab2:CreateButton({
+   Name = "🏃 العودة للسبون فوراً (⚡)",
+   Callback = function()
+       local Character = game.Players.LocalPlayer.Character
+       local RootPart = Character and Character:FindFirstChild("HumanoidRootPart")
+       if RootPart then
+           local Spawn = workspace:FindFirstChildOfClass("SpawnLocation")
+           if Spawn then
+               RootPart.CFrame = Spawn.CFrame + Vector3.new(0, 3, 0)
+           else
+               for _, v in pairs(workspace:GetDescendants()) do
+                   if v:IsA("SpawnLocation") then
+                       RootPart.CFrame = v.CFrame + Vector3.new(0, 3, 0)
+                       break
+                   end
+               end
+           end
+       end
+   end,
+})
+
+Tab3:CreateSlider({
+   Name = "تعديل السرعة الخارقة",
+   Increment = 5,
+   Suffix = " Speed",
+   CurrentValue = 16,
+   Flag = "SpeedSlider",
+   Callback = function(Value)
+       game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+   end,
+})
+
+Tab3:CreateSlider({
+   Name = "تعديل قوة القفز",
+   Increment = 5,
+   Suffix = " Jump",
+   CurrentValue = 50,
+   Flag = "JumpSlider",
+   Callback = function(Value)
+       game.Players.LocalPlayer.Character.Humanoid.UseJumpPower = true
+       game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+   end,
+})
+
+Tab4:CreateParagraph({
+   Title = "صاحب السكربت والملك:",
+   Content = "هذا السكربت مصمم ومحمي بالكامل للمطور the king noree262"
+})
