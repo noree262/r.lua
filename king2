@@ -1,0 +1,124 @@
+local Rayfield = loadstring(game:HttpGet('https://githubusercontent.com'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "👑 the king noree262 👑",
+   LoadingTitle = "جاري تفعيل سكربت ماب سرقة البيض...",
+   LoadingSubtitle = "بواسطة the king noree262",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "KingNoree_StealEgg",
+      FileName = "StealEggHub"
+   },
+   KeySystem = false
+})
+
+local Tab1 = Window:CreateTab("🌾 تتبع وتجميع البيض", 4483363487)
+local Tab2 = Window:CreateTab("⚡ الانتقال السريع", 4483363487)
+local Tab3 = Window:CreateTab("⚙️ قدرات الملك", 4483363487)
+
+local AutoFarm = false
+Tab1:CreateToggle({
+   Name = "تفعيل تجميع البيض تلقائياً (آمن)",
+   CurrentValue = false,
+   Flag = "FarmToggle",
+   Callback = function(Value)
+       AutoFarm = Value
+       task.spawn(function()
+           while AutoFarm do
+               local EggFolder = workspace:FindFirstChild("Eggs") or workspace:FindFirstChild("SpawnedEggs") or workspace
+               for _, v in pairs(EggFolder:GetChildren()) do
+                   if not AutoFarm then break end
+                   if (v.Name:lower():find("egg") or v:FindFirstChild("MeshId") or v:IsA("Model")) and v:FindFirstChildOfClass("BasePart") then
+                       local RootPart = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                       local TargetPart = v:FindFirstChildOfClass("BasePart")
+                       if RootPart and TargetPart and not v:FindFirstChild("Collected") then
+                           RootPart.CFrame = TargetPart.CFrame + Vector3.new(0, 2, 0)
+                           task.wait(5)
+                       end
+                   end
+               end
+               task.wait(1)
+           end
+       end)
+   end,
+})
+
+local XRayEnabled = false
+Tab1:CreateToggle({
+   Name = "تفعيل الأكس ري لكشف الجوائز والحيان (X-Ray)",
+   CurrentValue = false,
+   Flag = "XRayToggle",
+   Callback = function(Value)
+       XRayEnabled = Value
+       local function applyESP(model)
+           if model:FindFirstChild("KingESP") then return end
+           local part = model:FindFirstChildOfClass("BasePart")
+           if not part then return end
+           local textInfo = "بيض"
+           if model:FindFirstChild("Reward") or model:FindFirstChild("Cash") then
+               local reward = model:FindFirstChild("Reward") or model:FindFirstChild("Cash")
+               textInfo = "$" .. tostring(reward.Value)
+           elseif model:FindFirstChild("Health") or model:FindFirstChild("Hp") then
+               local hp = model:FindFirstChild("Health") or model:FindFirstChild("Hp")
+               textInfo = "الحيان: " .. tostring(hp.Value)
+           elseif model:FindFirstChild("Rarity") then
+               textInfo = tostring(model.Rarity.Value)
+           end
+           local bgui = Instance.new("BillboardGui")
+           bgui.Name = "KingESP"
+           bgui.AlwaysOnTop = true
+           bgui.Size = UDim2.new(0, 120, 0, 35)
+           bgui.StudsOffset = Vector3.new(0, 4, 0)
+           bgui.Parent = part
+           local tl = Instance.new("TextLabel")
+           tl.Size = UDim2.new(1, 0, 1, 0)
+           tl.BackgroundTransparency = 1
+           tl.Text = "🥚 [" .. textInfo .. "]"
+           tl.TextColor3 = Color3.fromRGB(255, 215, 0)
+           tl.TextSize = 15
+           tl.Font = Enum.Font.SourceSansBold
+           tl.Parent = bgui
+       end
+       if XRayEnabled then
+           local Folders = {workspace:FindFirstChild("Eggs"), workspace:FindFirstChild("SpawnedEggs"), workspace}
+           for _, folder in pairs(Folders) do
+               if folder then
+                   for _, c in pairs(folder:GetChildren()) do
+                       if c.Name:lower():find("egg") or c:IsA("Model") then
+                           applyESP(c)
+                       end
+                   end
+               end
+           end
+       else
+           for _, v in pairs(workspace:GetDescendants()) do
+               if v.Name == "KingESP" then v:Destroy() end
+           end
+       end
+   end,
+})
+
+Tab2:CreateButton({
+   Name = "🏃 العودة للسبون فوراً",
+   Callback = function()
+       local Character = game.Players.LocalPlayer.Character
+       local RootPart = Character and Character:FindFirstChild("HumanoidRootPart")
+       if RootPart then
+           local Spawn = workspace:FindFirstChildOfClass("SpawnLocation")
+           if Spawn then
+               RootPart.CFrame = Spawn.CFrame + Vector3.new(0, 4, 0)
+           end
+       end
+   end,
+})
+
+Tab3:CreateSlider({
+   Name = "سرعة الملك (آمنة وتدريجية)",
+   Increment = 2,
+   Suffix = " Speed",
+   CurrentValue = 16,
+   Flag = "KingSpeed",
+   Callback = function(Value)
+       game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+   end,
+})
