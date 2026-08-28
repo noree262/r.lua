@@ -1,0 +1,90 @@
+local Rayfield = loadstring(game:HttpGet('https://githubusercontent.com'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "تيست",
+   LoadingTitle = "جاري تشغيل تيست...",
+   LoadingSubtitle = "بواسطة Uzumaki",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "TestScriptConfig",
+      FileName = "TestHub"
+   }
+})
+
+local Tab = Window:CreateTab("الخيارات الأساسية", 4483363487)
+
+Tab:CreateSlider({
+   Name = "زياده السرعه",
+   Info = "تحكم في سرعة اللاعب",
+   Increment = 1,
+   Suffix = "Speed",
+   CurrentValue = 16,
+   Flag = "SpeedSlider",
+   Callback = function(Value)
+       game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+   end,
+})
+
+Tab:CreateSlider({
+   Name = "زياده القفز",
+   Info = "تحكم في قوة قفز اللاعب",
+   Increment = 1,
+   Suffix = "Jump",
+   CurrentValue = 50,
+   Flag = "JumpSlider",
+   Callback = function(Value)
+       game.Players.LocalPlayer.Character.Humanoid.UseJumpPower = true
+       game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+   end,
+})
+
+local Flying = false
+local FlySpeed = 50
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+Tab:CreateToggle({
+   Name = "تفعيل الطيران",
+   CurrentValue = false,
+   Flag = "FlyToggle",
+   Callback = function(Value)
+       Flying = Value
+       if Flying then
+           local Character = LocalPlayer.Character
+           local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+           local RootPart = Character and Character:FindFirstChild("HumanoidRootPart")
+           
+           if not RootPart then return end
+           
+           local BodyGyro = Instance.new("BodyGyro", RootPart)
+           BodyGyro.P = 9e4
+           BodyGyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+           BodyGyro.cframe = RootPart.CFrame
+           
+           local BodyVelocity = Instance.new("BodyVelocity", RootPart)
+           BodyVelocity.velocity = Vector3.new(0, 0.1, 0)
+           BodyVelocity.maxForce = Vector3.new(9e9, 9e9, 9e9)
+           
+           task.spawn(function()
+               while Flying and task.wait() do
+                   if Character and Humanoid and RootPart then
+                       local Camera = workspace.CurrentCamera
+                       local MoveDirection = Humanoid.MoveDirection
+                       
+                       BodyGyro.cframe = Camera.CFrame
+                       BodyVelocity.velocity = MoveDirection * FlySpeed + Vector3.new(0, 0.1, 0)
+                       
+                       if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.Space) then
+                           BodyVelocity.velocity = BodyVelocity.velocity + Vector3.new(0, FlySpeed, 0)
+                       end
+                   else
+                       break
+                   end
+               end
+               if BodyGyro then BodyGyro:Destroy() end
+               if BodyVelocity then BodyVelocity:Destroy() end
+           end)
+       end
+   end,
+})
