@@ -1,4 +1,4 @@
--- [[ سكربت ماب الكيبورد الأسطوري - بكامل الأدوات النادرة والذهبية ]] --
+-- [[ سكربت ماب الكيبورد الأسطوري المكتمل والمدمج بالأحداث - المجلد op ]] --
 
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
@@ -12,8 +12,8 @@ ScreenGui.ResetOnSpawn = false
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-MainFrame.Position = UDim2.new(0.5, -165, 0.5, -175)
-MainFrame.Size = UDim2.new(0, 330, 0, 350)
+MainFrame.Position = UDim2.new(0.5, -165, 0.5, -190)
+MainFrame.Size = UDim2.new(0, 330, 0, 380) -- تم تكبير الواجهة لتناسب الزر الجديد
 MainFrame.Active = true
 MainFrame.Draggable = true
 
@@ -27,7 +27,7 @@ TitleLabel.TextSize = 16
 
 local originalTracks, originalAuras = {}, {}
 
--- [[ زر الإغلاق X لحذف السكربت والمسارات ]]
+-- [[ زر الإغلاق X لحذف السكربت وإرجاع الماب طبيعي ]]
 CloseButton.Name = "CloseButton"
 CloseButton.Parent = MainFrame
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
@@ -45,9 +45,9 @@ CloseButton.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
 
--- أزرار الأنظمة والمسارات والتلفيل المباشر
+-- أزرار التلفيل والمسارات
 local TeleportToggle = Instance.new("TextButton", MainFrame)
-TeleportToggle.Position = UDim2.new(0.05, 0, 0.13, 0)
+TeleportToggle.Position = UDim2.new(0.05, 0, 0.12, 0)
 TeleportToggle.Size = UDim2.new(0.42, 0, 0, 30)
 TeleportToggle.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 TeleportToggle.Text = "تلفيل الأجهزة 💻"
@@ -62,7 +62,7 @@ TeleportToggle.MouseButton1Click:Connect(function()
 end)
 
 local TrackToggle = Instance.new("TextButton", MainFrame)
-TrackToggle.Position = UDim2.new(0.53, 0, 0.13, 0)
+TrackToggle.Position = UDim2.new(0.53, 0, 0.12, 0)
 TrackToggle.Size = UDim2.new(0.42, 0, 0, 30)
 TrackToggle.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 TrackToggle.Text = "فتح المسارات 🔓"
@@ -75,15 +75,14 @@ end)
 
 -- [[ قائمة التمرير للأدوات والآيتمات الذهبية والنادرة بالكامل ]]
 local ScrollList = Instance.new("ScrollingFrame", MainFrame)
-ScrollList.Position = UDim2.new(0.05, 0, 0.24, 0)
-ScrollList.Size = UDim2.new(0.9, 0, 0, 210)
+ScrollList.Position = UDim2.new(0.05, 0, 0.22, 0)
+ScrollList.Size = UDim2.new(0.9, 0, 0, 180) -- تم تعديل الطول لترك مساحة لزر الأحداث الجديد
 ScrollList.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-ScrollList.CanvasSize = UDim2.new(0, 0, 0, 620) -- مساحة تناسب كافة الأدوات المضافة
+ScrollList.CanvasSize = UDim2.new(0, 0, 0, 640)
 ScrollList.ScrollBarThickness = 6
 
--- مصفوفة حقن الأدوات المخصصة التي أرسلتها مع أيقونات ذهبية وملونة احترافية
+-- مصفوفة حقن الأدوات المخصصة
 local gameItems = {
-    -- الفئة الذهبية والسرية
     {name = "Golden Cheese", ar = "🧀 الجبنة الذهبية (تزيد السرعة)", icon = "rbxassetid://10848144004"},
     {name = "Golden Steak", ar = "🥩 الستيك الذهبي (سرعة فائقة)", icon = "rbxassetid://14413000844"},
     {name = "Golden Milk", ar = "🥛 الحليب الذهبي (Star Boost)", icon = "rbxassetid://11417088924"},
@@ -91,7 +90,6 @@ local gameItems = {
     {name = "Golden Mask", ar = "🎭 القناع الذهبي (+100% سرعة)", icon = "rbxassetid://14088410294"},
     {name = "Golden Hook", ar = "🪝 الهوك الذهبي (سحب وسرعة)", icon = "rbxassetid://12348500293"},
     {name = "Golden Keyboard Key", ar = "⌨️ الزر الذهبي للتروفيات", icon = "rbxassetid://12328639202"},
-    -- أيتمات الماب والجزيرة الأخرى
     {name = "White Chocolate Ice Cream", ar = "🍦 آيسكريم شوكولاتة بيضاء", icon = "rbxassetid://10672535914"},
     {name = "Chocolate Pretzel", ar = "🥨 بسكويت بريتزل شوكولاتة", icon = "rbxassetid://10672534579"},
     {name = "Choco Bar", ar = "🍫 لوح شوكولاتة الطاقة", icon = "rbxassetid://10672534000"},
@@ -101,7 +99,7 @@ local gameItems = {
     {name = "Chocolate Kart", ar = "🏎️ سيارة كارت الشوكولاتة", icon = "rbxassetid://11559900220"}
 }
 
--- بناء عناصر قائمة الآيتمات برمجياً بالصور
+-- توليد عناصر القائمة بالصور
 for i, item in ipairs(gameItems) do
     local Row = Instance.new("Frame", ScrollList)
     Row.Size = UDim2.new(1, -10, 0, 42)
@@ -127,7 +125,7 @@ for i, item in ipairs(gameItems) do
     local TakeBtn = Instance.new("TextButton", Row)
     TakeBtn.Size = UDim2.new(0, 45, 0, 26)
     TakeBtn.Position = UDim2.new(1, -50, 0, 8)
-    TakeBtn.BackgroundColor3 = Color3.fromRGB(218, 165, 32) -- لون ذهبي للأزرار
+    TakeBtn.BackgroundColor3 = Color3.fromRGB(218, 165, 32)
     TakeBtn.Text = "خذ"
     TakeBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
     TakeBtn.Font = Enum.Font.SourceSansBold
@@ -141,7 +139,36 @@ for i, item in ipairs(gameItems) do
     end)
 end
 
--- [[ خانة تعديل السرعة في أسفل الواجهة ]]
+-- [[ ⚡ زر صيد وتشغيل إيفنتات الماب المخفية والجوائز تلقائياً ]]
+local EventButton = Instance.new("TextButton", MainFrame)
+EventButton.Position = UDim2.new(0.05, 0, 0.72, 0)
+EventButton.Size = UDim2.new(0.9, 0, 0, 32)
+EventButton.BackgroundColor3 = Color3.fromRGB(70, 30, 120) -- لون بنفسجي مميز للأحداث
+EventButton.Text = "⚡ تشغيل إيفنتات الماب والجوائز المخفية"
+EventButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+EventButton.Font = Enum.Font.SourceSansBold
+EventButton.TextSize = 13
+
+EventButton.MouseButton1Click:Connect(function()
+    EventButton.Text = "جاري تفعيل الأحداث... 🚀"
+    local rep = game:GetService("ReplicatedStorage")
+    for _, child in pairs(rep:GetDescendants()) do
+        if child:IsA("RemoteEvent") then
+            local name = child.Name:lower()
+            if name:find("event") or name:find("reward") or name:find("claim") or name:find("gift") or name:find("admin") then
+                pcall(function()
+                    child:FireServer()
+                end)
+            end
+        end
+    end
+    task.wait(1)
+    EventButton.Text = "تم إرسال أوامر الإيفنتات! ✅"
+    task.wait(1.5)
+    EventButton.Text = "⚡ تشغيل إيفنتات الماب والجوائز المخفية"
+end)
+
+-- [[ مغير السرعة في أسفل الواجهة ]]
 local SpeedLabel = Instance.new("TextLabel", MainFrame)
 SpeedLabel.Text = "🏃 مغير السرعة المباشر:"
 SpeedLabel.Position = UDim2.new(0.05, 0, 0.85, 0)
