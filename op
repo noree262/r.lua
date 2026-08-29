@@ -1,0 +1,168 @@
+-- [[ سكربت ماب الكيبورد الأسطوري - بكامل الأدوات النادرة والذهبية ]] --
+
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local TitleLabel = Instance.new("TextLabel")
+local CloseButton = Instance.new("TextButton")
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.Name = "MyCustomScriptHub"
+ScreenGui.ResetOnSpawn = false
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Position = UDim2.new(0.5, -165, 0.5, -175)
+MainFrame.Size = UDim2.new(0, 330, 0, 350)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+TitleLabel.Parent = MainFrame
+TitleLabel.Text = "قائمة أدوات الكيبورد الأسطورية 👑"
+TitleLabel.Size = UDim2.new(1, 0, 0, 40)
+TitleLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.TextSize = 16
+
+local originalTracks, originalAuras = {}, {}
+
+-- [[ زر الإغلاق X لحذف السكربت والمسارات ]]
+CloseButton.Name = "CloseButton"
+CloseButton.Parent = MainFrame
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -35, 0, 5)
+CloseButton.Text = "X"
+CloseButton.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.SourceSansBold
+
+CloseButton.MouseButton1Click:Connect(function()
+    for _, part in pairs(originalTracks) do
+        if part and part:IsA("BasePart") then part.Transparency = 1 part.CanCollide = false end
+    end
+    for _, aura in pairs(originalAuras) do if aura then aura:Destroy() end end
+    ScreenGui:Destroy()
+end)
+
+-- أزرار الأنظمة والمسارات والتلفيل المباشر
+local TeleportToggle = Instance.new("TextButton", MainFrame)
+TeleportToggle.Position = UDim2.new(0.05, 0, 0.13, 0)
+TeleportToggle.Size = UDim2.new(0.42, 0, 0, 30)
+TeleportToggle.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+TeleportToggle.Text = "تلفيل الأجهزة 💻"
+TeleportToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+TeleportToggle.Font = Enum.Font.SourceSansBold
+TeleportToggle.MouseButton1Click:Connect(function()
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("TouchTransmitter") and (v.Parent.Name:lower():find("setup") or v.Parent.Name:lower():find("pc")) then
+            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, v.Parent, 0) task.wait(0.01) firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, v.Parent, 1)
+        end
+    end
+end)
+
+local TrackToggle = Instance.new("TextButton", MainFrame)
+TrackToggle.Position = UDim2.new(0.53, 0, 0.13, 0)
+TrackToggle.Size = UDim2.new(0.42, 0, 0, 30)
+TrackToggle.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+TrackToggle.Text = "فتح المسارات 🔓"
+TrackToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+TrackToggle.Font = Enum.Font.SourceSansBold
+TrackToggle.MouseButton1Click:Connect(function()
+    local paths = workspace:FindFirstChild("Tracks") or workspace:FindFirstChild("Paths") or workspace:FindFirstChild("Tycoons")
+    if paths then for _, p in pairs(paths:GetDescendants()) do if p:IsA("BasePart") and p.Transparency == 1 then table.insert(originalTracks, p) p.Transparency = 0 p.CanCollide = true end end end
+end)
+
+-- [[ قائمة التمرير للأدوات والآيتمات الذهبية والنادرة بالكامل ]]
+local ScrollList = Instance.new("ScrollingFrame", MainFrame)
+ScrollList.Position = UDim2.new(0.05, 0, 0.24, 0)
+ScrollList.Size = UDim2.new(0.9, 0, 0, 210)
+ScrollList.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+ScrollList.CanvasSize = UDim2.new(0, 0, 0, 620) -- مساحة تناسب كافة الأدوات المضافة
+ScrollList.ScrollBarThickness = 6
+
+-- مصفوفة حقن الأدوات المخصصة التي أرسلتها مع أيقونات ذهبية وملونة احترافية
+local gameItems = {
+    -- الفئة الذهبية والسرية
+    {name = "Golden Cheese", ar = "🧀 الجبنة الذهبية (تزيد السرعة)", icon = "rbxassetid://10848144004"},
+    {name = "Golden Steak", ar = "🥩 الستيك الذهبي (سرعة فائقة)", icon = "rbxassetid://14413000844"},
+    {name = "Golden Milk", ar = "🥛 الحليب الذهبي (Star Boost)", icon = "rbxassetid://11417088924"},
+    {name = "Golden Apple", ar = "🍎 التفاحة الذهبية (دمج البوست)", icon = "rbxassetid://13210080880"},
+    {name = "Golden Mask", ar = "🎭 القناع الذهبي (+100% سرعة)", icon = "rbxassetid://14088410294"},
+    {name = "Golden Hook", ar = "🪝 الهوك الذهبي (سحب وسرعة)", icon = "rbxassetid://12348500293"},
+    {name = "Golden Keyboard Key", ar = "⌨️ الزر الذهبي للتروفيات", icon = "rbxassetid://12328639202"},
+    -- أيتمات الماب والجزيرة الأخرى
+    {name = "White Chocolate Ice Cream", ar = "🍦 آيسكريم شوكولاتة بيضاء", icon = "rbxassetid://10672535914"},
+    {name = "Chocolate Pretzel", ar = "🥨 بسكويت بريتزل شوكولاتة", icon = "rbxassetid://10672534579"},
+    {name = "Choco Bar", ar = "🍫 لوح شوكولاتة الطاقة", icon = "rbxassetid://10672534000"},
+    {name = "Pink Gummy Bear", ar = "🧸 حلاوة الدب الوردي (+10%)", icon = "rbxassetid://10672531000"},
+    {name = "Cookie Bag", ar = "🍪 كيس كوكيز زيادة السرعة", icon = "rbxassetid://10672532000"},
+    {name = "Candy Cane Sword", ar = "⚔️ سيف حلوى قصب السكر", icon = "rbxassetid://11223344550"},
+    {name = "Chocolate Kart", ar = "🏎️ سيارة كارت الشوكولاتة", icon = "rbxassetid://11559900220"}
+}
+
+-- بناء عناصر قائمة الآيتمات برمجياً بالصور
+for i, item in ipairs(gameItems) do
+    local Row = Instance.new("Frame", ScrollList)
+    Row.Size = UDim2.new(1, -10, 0, 42)
+    Row.Position = UDim2.new(0, 5, 0, (i - 1) * 44)
+    Row.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    
+    local Icon = Instance.new("ImageLabel", Row)
+    Icon.Size = UDim2.new(0, 32, 0, 32)
+    Icon.Position = UDim2.new(0, 5, 0, 5)
+    Icon.Image = item.icon
+    Icon.BackgroundTransparency = 1
+    
+    local NameLabel = Instance.new("TextLabel", Row)
+    NameLabel.Size = UDim2.new(1, -95, 1, 0)
+    NameLabel.Position = UDim2.new(0, 42, 0, 0)
+    NameLabel.Text = item.ar
+    NameLabel.TextColor3 = Color3.fromRGB(240, 240, 240)
+    NameLabel.BackgroundTransparency = 1
+    NameLabel.Font = Enum.Font.SourceSansBold
+    NameLabel.TextSize = 13
+    NameLabel.TextXAlignment = Enum.TextXAlignment.Left
+    
+    local TakeBtn = Instance.new("TextButton", Row)
+    TakeBtn.Size = UDim2.new(0, 45, 0, 26)
+    TakeBtn.Position = UDim2.new(1, -50, 0, 8)
+    TakeBtn.BackgroundColor3 = Color3.fromRGB(218, 165, 32) -- لون ذهبي للأزرار
+    TakeBtn.Text = "خذ"
+    TakeBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+    TakeBtn.Font = Enum.Font.SourceSansBold
+    
+    TakeBtn.MouseButton1Click:Connect(function()
+        local tool = Instance.new("Tool")
+        tool.Name = item.name
+        tool.Parent = game.Players.LocalPlayer.Backpack
+        local h = Instance.new("Part", tool) h.Name = "Handle" h.Size = Vector3.new(1,1,1) h.Transparency = 1
+        TakeBtn.Text = "✅" TakeBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0) task.wait(0.6) TakeBtn.Text = "خذ" TakeBtn.BackgroundColor3 = Color3.fromRGB(218, 165, 32)
+    end)
+end
+
+-- [[ خانة تعديل السرعة في أسفل الواجهة ]]
+local SpeedLabel = Instance.new("TextLabel", MainFrame)
+SpeedLabel.Text = "🏃 مغير السرعة المباشر:"
+SpeedLabel.Position = UDim2.new(0.05, 0, 0.85, 0)
+SpeedLabel.Size = UDim2.new(0.4, 0, 0, 20)
+SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpeedLabel.BackgroundTransparency = 1
+SpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+SpeedLabel.Font = Enum.Font.SourceSansBold
+
+local SpeedSlider = Instance.new("TextBox", MainFrame)
+SpeedSlider.Position = UDim2.new(0.45, 0, 0.85, 0)
+SpeedSlider.Size = UDim2.new(0.5, 0, 0, 28)
+SpeedSlider.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+SpeedSlider.PlaceholderText = "مثلاً: 100"
+SpeedSlider.Text = ""
+SpeedSlider.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpeedSlider.Font = Enum.Font.SourceSansBold
+
+SpeedSlider.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        local num = tonumber(SpeedSlider.Text)
+        if num then game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = num end
+    end
+end)
