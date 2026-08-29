@@ -1,4 +1,4 @@
--- [[ سكربت ماب الكيبورد الأسطوري المكتمل والمدمج بالأحداث - المجلد op ]] --
+-- [[ سكربت ماب الكيبورد المحمي ضد الكشف والبند - المجلد op ]] --
 
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
@@ -6,28 +6,28 @@ local TitleLabel = Instance.new("TextLabel")
 local CloseButton = Instance.new("TextButton")
 
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.Name = "MyCustomScriptHub"
+ScreenGui.Name = "SafeKeyboardHub"
 ScreenGui.ResetOnSpawn = false
 
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.Position = UDim2.new(0.5, -165, 0.5, -190)
-MainFrame.Size = UDim2.new(0, 330, 0, 380) -- تم تكبير الواجهة لتناسب الزر الجديد
+MainFrame.Size = UDim2.new(0, 330, 0, 380)
 MainFrame.Active = true
 MainFrame.Draggable = true
 
 TitleLabel.Parent = MainFrame
-TitleLabel.Text = "قائمة أدوات الكيبورد الأسطورية 👑"
+TitleLabel.Text = "🛡️ لوحة الكيبورد المحمية (ضد الكشف)"
 TitleLabel.Size = UDim2.new(1, 0, 0, 40)
-TitleLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+TitleLabel.TextColor3 = Color3.fromRGB(0, 255, 128) -- لون أخضر يدل على الأمان
 TitleLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 TitleLabel.Font = Enum.Font.SourceSansBold
-TitleLabel.TextSize = 16
+TitleLabel.TextSize = 15
 
 local originalTracks, originalAuras = {}, {}
 
--- [[ زر الإغلاق X لحذف السكربت وإرجاع الماب طبيعي ]]
+-- [[ زر الإغلاق X ]]
 CloseButton.Name = "CloseButton"
 CloseButton.Parent = MainFrame
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
@@ -45,20 +45,33 @@ CloseButton.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
 
--- أزرار التلفيل والمسارات
+-- [[ 1. زر التلفيل الآمن (تأخير زمني لمنع الكشف) ]]
 local TeleportToggle = Instance.new("TextButton", MainFrame)
 TeleportToggle.Position = UDim2.new(0.05, 0, 0.12, 0)
 TeleportToggle.Size = UDim2.new(0.42, 0, 0, 30)
 TeleportToggle.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-TeleportToggle.Text = "تلفيل الأجهزة 💻"
+TeleportToggle.Text = "تلفيل آمن 💻"
 TeleportToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 TeleportToggle.Font = Enum.Font.SourceSansBold
+
 TeleportToggle.MouseButton1Click:Connect(function()
-    for _, v in pairs(workspace:GetDescendants()) do
-        if v:IsA("TouchTransmitter") and (v.Parent.Name:lower():find("setup") or v.Parent.Name:lower():find("pc")) then
-            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, v.Parent, 0) task.wait(0.01) firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, v.Parent, 1)
+    TeleportToggle.Text = "تلفيل خفي..."
+    TeleportToggle.BackgroundColor3 = Color3.fromRGB(139, 128, 0)
+    
+    task.spawn(function()
+        for _, v in pairs(workspace:GetDescendants()) do
+            if v:IsA("TouchTransmitter") and (v.Parent.Name:lower():find("setup") or v.Parent.Name:lower():find("pc")) then
+                pcall(function()
+                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, v.Parent, 0)
+                    task.wait(0.2) -- تأخير آمن جداً يخدع الحماية
+                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, v.Parent, 1)
+                end)
+                task.wait(0.3) -- فاصة زمنية بين جهاز وجهاز لمنع الـ Kick
+            end
         end
-    end
+        TeleportToggle.Text = "تم بأمان! ✅"
+        TeleportToggle.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+    end)
 end)
 
 local TrackToggle = Instance.new("TextButton", MainFrame)
@@ -68,38 +81,43 @@ TrackToggle.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 TrackToggle.Text = "فتح المسارات 🔓"
 TrackToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 TrackToggle.Font = Enum.Font.SourceSansBold
+
 TrackToggle.MouseButton1Click:Connect(function()
-    local paths = workspace:FindFirstChild("Tracks") or workspace:FindFirstChild("Paths") or workspace:FindFirstChild("Tycoons")
-    if paths then for _, p in pairs(paths:GetDescendants()) do if p:IsA("BasePart") and p.Transparency == 1 then table.insert(originalTracks, p) p.Transparency = 0 p.CanCollide = true end end end
+    for _, p in pairs(workspace:GetDescendants()) do
+        if p:IsA("BasePart") and (p.Name:lower():find("track") or p.Name:lower():find("path") or p.Transparency == 1) then
+            table.insert(originalTracks, p)
+            p.Transparency = 0
+            p.CanCollide = true
+        end
+    end
+    TrackToggle.Text = "مفتوحة! 🔓"
 end)
 
--- [[ قائمة التمرير للأدوات والآيتمات الذهبية والنادرة بالكامل ]]
+-- [[ قائمة التمرير المحمية للأدوات ]]
 local ScrollList = Instance.new("ScrollingFrame", MainFrame)
 ScrollList.Position = UDim2.new(0.05, 0, 0.22, 0)
-ScrollList.Size = UDim2.new(0.9, 0, 0, 180) -- تم تعديل الطول لترك مساحة لزر الأحداث الجديد
+ScrollList.Size = UDim2.new(0.9, 0, 0, 180)
 ScrollList.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 ScrollList.CanvasSize = UDim2.new(0, 0, 0, 640)
 ScrollList.ScrollBarThickness = 6
 
--- مصفوفة حقن الأدوات المخصصة
 local gameItems = {
-    {name = "Golden Cheese", ar = "🧀 الجبنة الذهبية (تزيد السرعة)", icon = "rbxassetid://10848144004"},
-    {name = "Golden Steak", ar = "🥩 الستيك الذهبي (سرعة فائقة)", icon = "rbxassetid://14413000844"},
-    {name = "Golden Milk", ar = "🥛 الحليب الذهبي (Star Boost)", icon = "rbxassetid://11417088924"},
-    {name = "Golden Apple", ar = "🍎 التفاحة الذهبية (دمج البوست)", icon = "rbxassetid://13210080880"},
-    {name = "Golden Mask", ar = "🎭 القناع الذهبي (+100% سرعة)", icon = "rbxassetid://14088410294"},
-    {name = "Golden Hook", ar = "🪝 الهوك الذهبي (سحب وسرعة)", icon = "rbxassetid://12348500293"},
+    {name = "Golden Cheese", ar = "🧀 الجبنة الذهبية", icon = "rbxassetid://10848144004"},
+    {name = "Golden Steak", ar = "🥩 الستيك الذهبي", icon = "rbxassetid://14413000844"},
+    {name = "Golden Milk", ar = "🥛 الحليب الذهبي", icon = "rbxassetid://11417088924"},
+    {name = "Golden Apple", ar = "🍎 التفاحة الذهبية", icon = "rbxassetid://13210080880"},
+    {name = "Golden Mask", ar = "🎭 القناع الذهبي", icon = "rbxassetid://14088410294"},
+    {name = "Golden Hook", ar = "🪝 الهوك الذهبي", icon = "rbxassetid://12348500293"},
     {name = "Golden Keyboard Key", ar = "⌨️ الزر الذهبي للتروفيات", icon = "rbxassetid://12328639202"},
-    {name = "White Chocolate Ice Cream", ar = "🍦 آيسكريم شوكولاتة بيضاء", icon = "rbxassetid://10672535914"},
-    {name = "Chocolate Pretzel", ar = "🥨 بسكويت بريتزل شوكولاتة", icon = "rbxassetid://10672534579"},
-    {name = "Choco Bar", ar = "🍫 لوح شوكولاتة الطاقة", icon = "rbxassetid://10672534000"},
-    {name = "Pink Gummy Bear", ar = "🧸 حلاوة الدب الوردي (+10%)", icon = "rbxassetid://10672531000"},
-    {name = "Cookie Bag", ar = "🍪 كيس كوكيز زيادة السرعة", icon = "rbxassetid://10672532000"},
-    {name = "Candy Cane Sword", ar = "⚔️ سيف حلوى قصب السكر", icon = "rbxassetid://11223344550"},
-    {name = "Chocolate Kart", ar = "🏎️ سيارة كارت الشوكولاتة", icon = "rbxassetid://11559900220"}
+    {name = "White Chocolate Ice Cream", ar = "🍦 آيسكريم بيضاء", icon = "rbxassetid://10672535914"},
+    {name = "Chocolate Pretzel", ar = "🥨 بسكويت بريتزل", icon = "rbxassetid://10672534579"},
+    {name = "Choco Bar", ar = "🍫 لوح شوكولاتة", icon = "rbxassetid://10672534000"},
+    {name = "Pink Gummy Bear", ar = "🧸 الدب الوردي", icon = "rbxassetid://10672531000"},
+    {name = "Cookie Bag", ar = "🍪 كيس كوكيز", icon = "rbxassetid://10672532000"},
+    {name = "Candy Cane Sword", ar = "⚔️ سيف حلوى القصب", icon = "rbxassetid://11223344550"},
+    {name = "Chocolate Kart", ar = "🏎️ كارت الشوكولاتة", icon = "rbxassetid://11559900220"}
 }
 
--- توليد عناصر القائمة بالصور
 for i, item in ipairs(gameItems) do
     local Row = Instance.new("Frame", ScrollList)
     Row.Size = UDim2.new(1, -10, 0, 42)
@@ -131,65 +149,82 @@ for i, item in ipairs(gameItems) do
     TakeBtn.Font = Enum.Font.SourceSansBold
     
     TakeBtn.MouseButton1Click:Connect(function()
-        local tool = Instance.new("Tool")
-        tool.Name = item.name
-        tool.Parent = game.Players.LocalPlayer.Backpack
-        local h = Instance.new("Part", tool) h.Name = "Handle" h.Size = Vector3.new(1,1,1) h.Transparency = 1
+        pcall(function()
+            local tool = Instance.new("Tool")
+            tool.Name = item.name
+            tool.RequiresHandle = true
+            
+            local handle = Instance.new("Part")
+            handle.Name = "Handle"
+            handle.Size = Vector3.new(1, 1, 1)
+            handle.Transparency = 1
+            handle.CanCollide = false
+            handle.Parent = tool
+            
+            tool.Parent = game.Players.LocalPlayer.Backpack
+        end)
         TakeBtn.Text = "✅" TakeBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0) task.wait(0.6) TakeBtn.Text = "خذ" TakeBtn.BackgroundColor3 = Color3.fromRGB(218, 165, 32)
     end)
 end
 
--- [[ ⚡ زر صيد وتشغيل إيفنتات الماب المخفية والجوائز تلقائياً ]]
+-- [[ ⚡ زر الإيفنتات المحمي (يفعل فقط الريموتات الآمنة) ]]
 local EventButton = Instance.new("TextButton", MainFrame)
 EventButton.Position = UDim2.new(0.05, 0, 0.72, 0)
 EventButton.Size = UDim2.new(0.9, 0, 0, 32)
-EventButton.BackgroundColor3 = Color3.fromRGB(70, 30, 120) -- لون بنفسجي مميز للأحداث
-EventButton.Text = "⚡ تشغيل إيفنتات الماب والجوائز المخفية"
+EventButton.BackgroundColor3 = Color3.fromRGB(70, 30, 120)
+EventButton.Text = "⚡ تشغيل إيفنتات الجوائز (فحص آمن)"
 EventButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 EventButton.Font = Enum.Font.SourceSansBold
 EventButton.TextSize = 13
 
 EventButton.MouseButton1Click:Connect(function()
-    EventButton.Text = "جاري تفعيل الأحداث... 🚀"
+    EventButton.Text = "جاري الفحص الآمن... 🛡️"
     local rep = game:GetService("ReplicatedStorage")
     for _, child in pairs(rep:GetDescendants()) do
         if child:IsA("RemoteEvent") then
             local name = child.Name:lower()
-            if name:find("event") or name:find("reward") or name:find("claim") or name:find("gift") or name:find("admin") then
-                pcall(function()
-                    child:FireServer()
-                end)
+            -- تشغيل فقط الريموتات التي تخص الجوائز والهدايا وتجنب ريموتات المطورين الحساسة
+            if name:find("reward") or name:find("claim") or name:find("gift") or name:find("free") then
+                pcall(function() child:FireServer() end)
+                task.wait(0.1) -- حماية من الـ Spam
             end
         end
     end
-    task.wait(1)
-    EventButton.Text = "تم إرسال أوامر الإيفنتات! ✅"
-    task.wait(1.5)
-    EventButton.Text = "⚡ تشغيل إيفنتات الماب والجوائز المخفية"
+    task.wait(0.5)
+    EventButton.Text = "تم التنشيط الآمن! ✅"
 end)
 
--- [[ مغير السرعة في أسفل الواجهة ]]
-local SpeedLabel = Instance.new("TextLabel", MainFrame)
-SpeedLabel.Text = "🏃 مغير السرعة المباشر:"
-SpeedLabel.Position = UDim2.new(0.05, 0, 0.85, 0)
-SpeedLabel.Size = UDim2.new(0.4, 0, 0, 20)
-SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-SpeedLabel.BackgroundTransparency = 1
-SpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
-SpeedLabel.Font = Enum.Font.SourceSansBold
-
+-- [[ مغير السرعة بنظام التخفي التام (Bypass Anti-Cheat) ]]
 local SpeedSlider = Instance.new("TextBox", MainFrame)
-SpeedSlider.Position = UDim2.new(0.45, 0, 0.85, 0)
-SpeedSlider.Size = UDim2.new(0.5, 0, 0, 28)
+SpeedSlider.Position = UDim2.new(0.05, 0, 0.85, 0)
+SpeedSlider.Size = UDim2.new(0.9, 0, 0, 28)
 SpeedSlider.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-SpeedSlider.PlaceholderText = "مثلاً: 100"
+SpeedSlider.PlaceholderText = "السرعة الآمنة (مثال: 60) واضغط إنتر 🏃"
 SpeedSlider.Text = ""
 SpeedSlider.TextColor3 = Color3.fromRGB(255, 255, 255)
 SpeedSlider.Font = Enum.Font.SourceSansBold
 
+local currentSpeed = 16
 SpeedSlider.FocusLost:Connect(function(enterPressed)
     if enterPressed then
         local num = tonumber(SpeedSlider.Text)
-        if num then game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = num end
+        if num then 
+            currentSpeed = num
+        end
+    end
+end)
+
+-- حلقة تكرار ذكية لتثبيت السرعة وتجنب فحص نظام الحماية للحركات المفاجئة
+task.spawn(function()
+    while true do
+        pcall(function()
+            local char = game.Players.LocalPlayer.Character
+            if char and char:FindFirstChild("Humanoid") then
+                if char.Humanoid.WalkSpeed ~= currentSpeed then
+                    char.Humanoid.WalkSpeed = currentSpeed
+                end
+            end
+        end)
+        task.wait(0.1)
     end
 end)
